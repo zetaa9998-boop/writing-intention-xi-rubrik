@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing Challenge - Intention | Grade XI SMK</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);color:#1e293b}
+.container{max-width:1000px;margin:auto;padding:24px}
+.hero{background:linear-gradient(135deg,#0f766e,#2563eb);color:white;border-radius:22px;padding:28px;text-align:center;box-shadow:0 10px 30px #0002}
+.hero h1{margin:0 0 8px;font-size:32px}.hero p{margin:6px}
+.card{background:white;border-radius:18px;padding:24px;margin-top:20px;box-shadow:0 6px 20px #0001}
+h2{color:#0f766e;margin-top:0}
+label{font-weight:bold;display:block;margin:12px 0 6px}
+input,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
+textarea{min-height:180px;resize:vertical}
+button{border:0;border-radius:10px;padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer;margin:6px 4px 6px 0}
+.primary{background:#2563eb;color:white}.secondary{background:#e2e8f0}.success{background:#059669;color:white}
+.hidden{display:none}
+.progress{height:12px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:15px 0}
+.progress-bar{height:100%;width:0;background:#2563eb;transition:.3s}
+.prompt{background:#eff6ff;border-left:5px solid #2563eb;padding:16px;border-radius:10px;margin:15px 0;line-height:1.6}
+.tip{background:#fefce8;border-left:5px solid #eab308;padding:14px;border-radius:10px;line-height:1.5}
+.word-count{text-align:right;color:#64748b;font-size:14px;margin-top:5px}
+.feedback{padding:14px;border-radius:10px;margin-top:15px;background:#f1f5f9;line-height:1.6}
+.rubric{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rubric div{background:#f8fafc;padding:12px;border-radius:10px;text-align:center}
+.score-box{text-align:center;font-size:24px;font-weight:bold;padding:20px;background:#eff6ff;border-radius:14px;margin:15px 0}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}
+@media(max-width:700px){.rubric{grid-template-columns:1fr 1fr}.hero h1{font-size:25px}table{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+<h1>✍️ WRITING CHALLENGE</h1>
+<p><b>EXPRESSING INTENTION</b> • Grade XI SMK • Intermediate</p>
+<p>Write clearly about your plans, ambitions, decisions, and future intentions.</p>
+</div>
+
+<section id="start" class="card">
+<h2>🚀 Let's Start</h2>
+<label>Student Name</label>
+<input id="name" placeholder="Enter your name">
+<label>Class</label>
+<input id="className" placeholder="Example: XI TKJ 1">
+<div class="tip">
+<b>Writing focus:</b> Use expressions such as
+<i>be going to, plan to, intend to, hope to, would like to, want to, aim to</i>,
+and <i>would rather</i>.
+</div>
+<button class="primary" onclick="startGame()">Start Challenge →</button>
+</section>
+
+<section id="game" class="card hidden">
+<b id="missionLabel">Mission 1 of 5</b>
+<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+<h2 id="missionTitle"></h2>
+<div class="prompt" id="prompt"></div>
+<div class="tip" id="tip"></div>
+<label>✍️ Your Writing</label>
+<textarea id="answer" placeholder="Write your answer here..."></textarea>
+<div class="word-count"><span id="wordCount">0</span> words</div>
+<button class="secondary" onclick="clearAnswer()">Clear</button>
+<button class="primary" onclick="checkWriting()">Submit Writing</button>
+<div id="feedback" class="feedback hidden"></div>
+<button id="nextBtn" class="success hidden" onclick="nextMission()">Next Mission →</button>
+</section>
+
+<section id="result" class="card hidden">
+<h2>🏆 Challenge Completed!</h2>
+<div class="score-box" id="finalScore"></div>
+<p id="resultMessage"></p>
+
+<table>
+<tr><th>Student</th><td id="rName"></td></tr>
+<tr><th>Class</th><td id="rClass"></td></tr>
+<tr><th>Writing Missions</th><td>5</td></tr>
+<tr><th>Average Score</th><td id="rAverage"></td></tr>
+<tr><th>Achievement</th><td id="rAchievement"></td></tr>
+</table>
+
+<h3>📊 Writing Rubric</h3>
+<div class="rubric">
+<div><b>Content</b><br>25 pts</div>
+<div><b>Grammar</b><br>25 pts</div>
+<div><b>Vocabulary</b><br>25 pts</div>
+<div><b>Organization</b><br>25 pts</div>
+</div>
+
+<h3>Mission Scores</h3>
+<table id="scoreTable"></table>
+
+<button class="primary" onclick="window.print()">🖨️ Print Result</button>
+<button class="secondary" onclick="location.reload()">🔄 Play Again</button>
+</section>
+
+</div>
+
+<script>
+const missions=[
+{
+title:"Mission 1 — My Career Plan",
+prompt:"Write a paragraph of 80–100 words about the career you intend to pursue after graduating from SMK. Explain the job you want, why you are interested in it, and what steps you plan to take.",
+tip:"Use: I intend to..., I plan to..., My goal is to..., I hope to..., I am going to..."
+},
+{
+title:"Mission 2 — Internship Intention",
+prompt:"Imagine that you are going to join an internship. Write 80–100 words explaining what kind of company you would like to work for, what skills you want to develop, and what you hope to learn from the experience.",
+tip:"Use specific reasons and future expressions. Try: I would like to..., I hope to..., I aim to..., I am planning to..."
+},
+{
+title:"Mission 3 — My Plan After Graduation",
+prompt:"Write 100–120 words about your plans after graduation. Compare at least two possibilities, such as working, continuing your studies, taking professional training, or starting a business. Then explain which option you intend to choose and why.",
+tip:"Use connectors such as however, because, therefore, first, then, and finally."
+},
+{
+title:"Mission 4 — A Personal Development Plan",
+prompt:"Write 100–120 words about one skill you want to improve during the next six months. Explain why the skill is important, how you intend to improve it, how often you will practice, and what result you expect.",
+tip:"Make your plan realistic and specific. Use: I am going to..., I intend to..., I will..., I hope to..."
+},
+{
+title:"Mission 5 — My Future Vision",
+prompt:"Write 120–150 words describing your vision for the next three years. Include your education or career goals, important skills you want to gain, and actions you intend to take. End with the result you hope to achieve.",
+tip:"Organize your writing: Vision → Reasons → Action Plan → Expected Result."
+}
+];
+
+let current=0,scores=[],submitted=false;
+const answer=document.getElementById("answer");
+
+answer.addEventListener("input",()=>{
+const words=answer.value.trim()?answer.value.trim().split(/\s+/).length:0;
+document.getElementById("wordCount").textContent=words;
+});
+
+function startGame(){
+if(!document.getElementById("name").value.trim()||
+!document.getElementById("className").value.trim()){
+alert("Please enter your name and class first.");return;
+}
+document.getElementById("start").classList.add("hidden");
+document.getElementById("game").classList.remove("hidden");
+showMission();
+}
+
+function showMission(){
+submitted=false;
+const m=missions[current];
+document.getElementById("missionLabel").textContent=
+`Mission ${current+1} of ${missions.length}`;
+document.getElementById("progressBar").style.width=
+(current/missions.length*100)+"%";
+document.getElementById("missionTitle").textContent=m.title;
+document.getElementById("prompt").textContent=m.prompt;
+document.getElementById("tip").innerHTML="<b>💡 Tip:</b> "+m.tip;
+clearAnswer();
+document.getElementById("feedback").classList.add("hidden");
+document.getElementById("nextBtn").classList.add("hidden");
+}
+
+function clearAnswer(){
+answer.value="";
+document.getElementById("wordCount").textContent="0";
+}
+
+function checkWriting(){
+if(submitted)return;
+
+const text=answer.value.trim();
+const words=text?text.split(/\s+/):[];
+
+if(words.length<20){
+alert("Please write at least 20 words before submitting.");
+return;
+}
+
+const lower=text.toLowerCase();
+
+const intentionTerms=[
+"going to","plan to","plans to","planning to","intend to",
+"intends to","hope to","would like to","want to","aim to",
+"would rather","will ","goal","intention"
+];
+
+const connectors=[
+"because","however","therefore","then","first","next",
+"also","finally","after that","in addition","although"
+];
+
+const used=intentionTerms.filter(x=>lower.includes(x)).length;
+const connectorCount=connectors.filter(x=>lower.includes(x)).length;
+
+/* RUBRIC SCORING — 25 points each */
+// Content: rewards sufficient length, relevant details, and clear intention expressions.
+let content=8;
+if(words.length>=60) content+=4;
+if(words.length>=80) content+=4;
+if(words.length>=100) content+=3;
+if(used>=2) content+=3;
+if(used>=4) content+=3;
+content=Math.min(25,content);
+
+// Organization: rewards connectors, sentence development, and paragraph structure.
+let organization=10;
+if(words.length>=50) organization+=3;
+if(connectorCount>=2) organization+=3;
+if(connectorCount>=4) organization+=3;
+if(/(^|[.!?] )([A-Z][^.!?]{5,})/.test(text)) organization+=3;
+organization=Math.min(25,organization);
+
+// Grammar: rewards complete sentences, punctuation, and correct intention structures.
+let grammar=10;
+const sentenceCount=Math.max(1,text.split(/[.!?]+/).filter(x=>x.trim()).length);
+const avgSentence=words.length/sentenceCount;
+if(sentenceCount>=3) grammar+=3;
+if(/[.!?]/.test(text)) grammar+=3;
+if(used>=2) grammar+=3;
+if(avgSentence>=6 && avgSentence<=25) grammar+=3;
+if(!(/\b(he|she) (plan|hope|intend|want|aim) to\b/i.test(text))) grammar+=3;
+grammar=Math.min(25,grammar);
+
+// Vocabulary: rewards variety and appropriate future/intention vocabulary.
+const advancedVocab=["ambition","career","internship","qualification","skill","training","experience","professional","opportunity","development","goal","future","graduate","business","education","achievement"];
+const vocabUsed=advancedVocab.filter(x=>lower.includes(x)).length;
+let vocabulary=8+Math.min(9,vocabUsed*2)+Math.min(8,used*2);
+vocabulary=Math.min(25,vocabulary);
+
+const total=content+organization+grammar+vocabulary;
+
+scores.push({
+title:missions[current].title,
+content,grammar,vocabulary,organization,total
+});
+
+let comment=
+total>=90?
+"Excellent! Your ideas are clear, detailed, and well organized.":
+total>=80?
+"Very good! Your intention is clear. Add more specific details to make your writing stronger.":
+total>=70?
+"Good effort! Your main idea is understandable. Work on grammar, vocabulary, and supporting details.":
+"Keep practicing. Make your intention clearer and use more appropriate expressions.";
+
+document.getElementById("feedback").innerHTML=
+`<b>Mission Score: ${total}/100</b><br>${comment}<br><br>
+<b>Content:</b> ${content}/25 &nbsp; | &nbsp; <b>Organization:</b> ${organization}/25<br>
+<b>Grammar:</b> ${grammar}/25 &nbsp; | &nbsp; <b>Vocabulary:</b> ${vocabulary}/25<br>
+<b>Intention expressions detected:</b> ${used} &nbsp; | &nbsp; <b>Connectors:</b> ${connectorCount}<br>
+<b>Word count:</b> ${words.length}<br>
+<small>This automatic score is formative. Teacher review can provide the final assessment.</small>`;
+
+document.getElementById("feedback").classList.remove("hidden");
+document.getElementById("nextBtn").classList.remove("hidden");
+submitted=true;
+}
+
+function nextMission(){
+if(!submitted)return;
+current++;
+if(current<missions.length){
+showMission();
+}else{
+finishGame();
+}
+}
+
+function finishGame(){
+document.getElementById("game").classList.add("hidden");
+document.getElementById("result").classList.remove("hidden");
+
+const avg=Math.round(
+scores.reduce((a,b)=>a+b.total,0)/scores.length
+);
+
+const achievement=
+avg>=90?"Excellent":
+avg>=80?"Very Good":
+avg>=70?"Good":
+avg>=60?"Fair":
+"Keep Practicing";
+
+document.getElementById("finalScore").textContent=
+`${avg} / 100 — ${achievement}`;
+
+document.getElementById("rName").textContent=
+document.getElementById("name").value;
+
+document.getElementById("rClass").textContent=
+document.getElementById("className").value;
+
+document.getElementById("rAverage").textContent=avg+"/100";
+document.getElementById("rAchievement").textContent=achievement;
+
+document.getElementById("resultMessage").textContent=
+avg>=80?
+"Great work! You can express your future intentions and plans clearly in English.":
+"Good effort! Keep practicing how to express plans, goals, intentions, and future decisions.";
+
+document.getElementById("scoreTable").innerHTML=
+"<tr><th>Mission</th><th>Content</th><th>Grammar</th><th>Vocabulary</th><th>Organization</th><th>Total</th></tr>"+
+scores.map(s=>
+`<tr><td>${s.title}</td><td>${s.content}</td><td>${s.grammar}</td><td>${s.vocabulary}</td><td>${s.organization}</td><td><b>${s.total}</b></td></tr>`
+).join("");
+}
+</script>
+</body>
+</html>
